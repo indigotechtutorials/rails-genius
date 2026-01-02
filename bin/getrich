@@ -1,0 +1,38 @@
+#!/usr/bin/ruby
+
+require 'rails_genius'
+require 'thor'
+require 'pry'
+
+class GetRichCLI < Thor
+  class_option :verbose, :type => :boolean, :aliases => "-v"
+  def initialize(*args)
+    super
+    @app_options = {}
+  end
+  desc "start", "Build your app now! 🎉"
+  def start
+    ask_question :name, "What do you want to name your app?", true
+    ask_question :framework, """
+      What framework do you want to use?
+      (tailwind | bootstrap)
+      Or leave blank for regular CSS
+    """
+    RailsGenius::AppGenerator.new(@app_options).call
+  end
+
+  default_task :start
+private
+  def ask_question(key, question, required = false)
+    puts question.split("\n").map { |l| l.strip }.join("\n")
+    print "Enter here: "
+    answer = gets.chomp.strip
+    if answer.empty? && required
+      return ask_question(key, question, true)
+    end
+    @app_options[key] = answer
+    answer
+  end
+end
+
+GetRichCLI.start(ARGV)
