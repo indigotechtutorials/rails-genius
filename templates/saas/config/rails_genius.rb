@@ -1,0 +1,1 @@
+RailsGenius.type = "saas"

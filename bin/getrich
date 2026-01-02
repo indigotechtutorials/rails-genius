@@ -12,23 +12,37 @@ class GetRichCLI < Thor
   end
   desc "start", "Build your app now! 🎉"
   def start
-    ask_question :name, "What do you want to name your app?", true
-    ask_question :framework, """
-      What framework do you want to use?
-      (tailwind | bootstrap)
-      Or leave blank for regular CSS
-    """
+    ask_question :name, "What do you want to name your app?", required: true
+    ask_question :framework do 
+      """
+        What framework do you want to use?
+        (tailwind | bootstrap)
+        Or leave blank for regular CSS
+      """
+    end
+    ask_question :type, required: true do 
+      """
+        What type of app do you want to build?
+        Options are
+      
+        (saas) Sell access to your website with Stripe subscriptions
+          - User accounts
+          - Subscriptions
+          - Stripe checkout
+      """
+    end
     RailsGenius::AppGenerator.new(@app_options).call
   end
 
   default_task :start
 private
-  def ask_question(key, question, required = false)
+  def ask_question(key, question = nil, required: false)
+    question = yield if !question
     puts question.split("\n").map { |l| l.strip }.join("\n")
     print "Enter here: "
     answer = gets.chomp.strip
     if answer.empty? && required
-      return ask_question(key, question, true)
+      return ask_question(key, question, required: true)
     end
     @app_options[key] = answer
     answer
