@@ -27,7 +27,7 @@ module RailsGenius
     def template_command
       case formatted_options[:type]
       when 'saas'
-        path_to_saas_template = GITHUB_URL + "/templates/template.rb"
+        path_to_saas_template = GITHUB_URL + "templates/saas/template.rb"
         "-m #{path_to_saas_template}"
       end
     end
